@@ -1,165 +1,132 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaBars, FaTimes } from 'react-icons/fa';
 
-const Navbar = ({ darkMode, setDarkMode, activeSection, setActiveSection }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const navItems = [
+  { id: 'home', label: 'Home' },
+  { id: 'about', label: 'About' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'contact', label: 'Contact' },
+];
+
+const Navbar = ({ activeSection, setActiveSection }) => {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'about', label: 'About' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'projects', label: 'Projects' },
-    { id: 'contact', label: 'Contact' },
-    { id: 'experience', label: 'Experience' },
-  ];
-
-  // Smooth scroll function
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const yOffset = -80; // adjust based on navbar height
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
     }
+    setActiveSection(id);
+    setMenuOpen(false);
   };
 
   return (
-    <motion.nav
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? darkMode
-            ? 'bg-gray-800 shadow-lg'
-            : 'bg-white shadow-lg'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex justify-between items-center">
-          <motion.a
-            onClick={() => {
-              scrollToSection('home');
-              setActiveSection('home');
-              setIsOpen(false);
-            }}
+    <>
+      <motion.nav
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? 'bg-[rgba(8,12,20,0.85)] backdrop-blur-xl border-b border-white/5 py-3'
+            : 'bg-transparent py-5'
+        }`}
+      >
+        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+          {/* Logo */}
+          <motion.button
             whileHover={{ scale: 1.05 }}
-            className="text-2xl font-bold text-blue-500 cursor-pointer"
+            whileTap={{ scale: 0.95 }}
+            onClick={() => scrollTo('home')}
+            className="text-xl font-bold tracking-tight"
           >
-            MG.
-          </motion.a>
+            <span className="gradient-text" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>MG.</span>
+          </motion.button>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
-              <motion.a
+              <button
                 key={item.id}
-                onClick={() => {
-                  scrollToSection(item.id);
-                  setActiveSection(item.id);
-                }}
-                whileHover={{ scale: 1.05 }}
-                className={`px-3 py-2 text-sm font-medium cursor-pointer ${
-                  activeSection === item.id
-                    ? 'text-blue-500'
-                    : darkMode
-                    ? 'text-gray-300 hover:text-white'
-                    : 'text-gray-700 hover:text-gray-900'
+                onClick={() => scrollTo(item.id)}
+                className={`nav-link px-4 py-2 rounded-lg transition-colors ${
+                  activeSection === item.id ? 'active text-white' : 'text-gray-400 hover:text-white'
                 }`}
               >
                 {item.label}
-              </motion.a>
+              </button>
             ))}
-
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full focus:outline-none"
-              aria-label="Toggle dark mode"
+            <motion.a
+              href="#contact"
+              onClick={(e) => { e.preventDefault(); scrollTo('contact'); }}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              className="ml-4 px-5 py-2 rounded-lg text-sm font-semibold text-white glow-btn"
+              style={{ background: 'linear-gradient(135deg, #4f8ef7, #7c5af6)' }}
             >
-              {darkMode ? (
-                <FaSun className="text-yellow-400 text-xl" />
-              ) : (
-                <FaMoon className="text-gray-700 text-xl" />
-              )}
-            </motion.button>
+              Hire Me
+            </motion.a>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 mr-4 rounded-full focus:outline-none"
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? (
-                <FaSun className="text-yellow-400 text-xl" />
-              ) : (
-                <FaMoon className="text-gray-700 text-xl" />
-              )}
-            </motion.button>
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-500 hover:text-gray-600 focus:outline-none"
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden mt-4"
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden text-gray-300 hover:text-white p-2 rounded-lg bg-white/5"
           >
-            <div className="px-2 pt-2 pb-4 space-y-1">
-              {navItems.map((item) => (
-                <motion.a
+            {menuOpen ? <FaTimes size={18} /> : <FaBars size={18} />}
+          </button>
+        </div>
+      </motion.nav>
+
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed top-[64px] left-0 right-0 z-40 bg-[rgba(8,12,20,0.97)] backdrop-blur-xl border-b border-white/5 md:hidden"
+          >
+            <div className="flex flex-col p-4 gap-1">
+              {navItems.map((item, i) => (
+                <motion.button
                   key={item.id}
-                  onClick={() => {
-                    scrollToSection(item.id);
-                    setActiveSection(item.id);
-                    setIsOpen(false);
-                  }}
-                  whileHover={{ scale: 1.02 }}
-                  className={`block px-3 py-2 rounded-md text-base font-medium cursor-pointer ${
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  onClick={() => scrollTo(item.id)}
+                  className={`text-left px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                     activeSection === item.id
-                      ? 'bg-blue-500 text-white'
-                      : darkMode
-                      ? 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      ? 'bg-blue-500/10 text-blue-400'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   {item.label}
-                </motion.a>
+                </motion.button>
               ))}
+              <button
+                onClick={() => scrollTo('contact')}
+                className="mt-2 px-4 py-3 rounded-xl text-sm font-semibold text-white text-left"
+                style={{ background: 'linear-gradient(135deg, #4f8ef7, #7c5af6)' }}
+              >
+                Hire Me
+              </button>
             </div>
           </motion.div>
         )}
-      </div>
-    </motion.nav>
+      </AnimatePresence>
+    </>
   );
 };
 
