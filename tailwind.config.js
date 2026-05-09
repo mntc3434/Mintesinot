@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -6,33 +7,29 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
-      colors: {
-        brand: {
-          blue: '#4f8ef7',
-          violet: '#7c5af6',
-          cyan: '#22d3ee',
-        },
-      },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Space Grotesk', 'sans-serif'],
       },
-      backgroundImage: {
-        'gradient-brand': 'linear-gradient(135deg, #4f8ef7, #7c5af6)',
+      colors: {
+        background: '#000000',
+        surface: '#0a0a0a',
+        border: '#1f1f1f',
+        muted: '#a1a1aa', // zinc-400
+        primary: '#ffffff',
       },
       animation: {
-        'float': 'float 7s ease-in-out infinite',
-        'pulse-ring': 'pulse-ring 2s ease-in-out infinite',
+        'fade-in': 'fadeIn 0.5s ease-out forwards',
+        'slide-up': 'slideUp 0.5s ease-out forwards',
       },
       keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
-          '50%': { transform: 'translateY(-16px) rotate(2deg)' },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
-        'pulse-ring': {
-          '0%': { boxShadow: '0 0 0 0 rgba(34, 197, 94, 0.7)' },
-          '70%': { boxShadow: '0 0 0 8px rgba(34, 197, 94, 0)' },
-          '100%': { boxShadow: '0 0 0 0 rgba(34, 197, 94, 0)' },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
     },

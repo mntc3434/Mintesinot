@@ -1,257 +1,156 @@
-import { motion } from 'framer-motion';
-import { FaGithub, FaTelegram, FaFileDownload } from 'react-icons/fa';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { FaGithub, FaTelegram, FaArrowDown, FaEnvelope } from 'react-icons/fa';
 import profileImg from '../assets/profile3.jpg';
 import resume from '../assets/resume.pdf';
-import { useState, useEffect } from 'react';
 
 const Header = ({ setActiveSection }) => {
-  // Typing animation state
-  const [displayText, setDisplayText] = useState("");
-  const fullName = "Mintesinot Getu";
-  const [typingComplete, setTypingComplete] = useState(false);
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+    setActiveSection(id);
+  };
 
-  useEffect(() => {
-    let timeout;
-    let currentIndex = 0;
+  const { scrollY } = useScroll();
+  const yParallax = useTransform(scrollY, [0, 1000], [0, 150]);
 
-    const typeText = () => {
-      if (currentIndex < fullName.length) {
-        setDisplayText(fullName.substring(0, currentIndex + 1));
-        currentIndex++;
-        timeout = setTimeout(typeText, 100);
-      } else {
-        setTypingComplete(true);
-        timeout = setTimeout(() => {
-          setTypingComplete(false);
-          setDisplayText("");
-          currentIndex = 0;
-          typeText();
-        }, 2000);
-      }
-    };
+  // Storytelling staggered text animation
+  const quote = "Software Engineer building intelligent solutions.";
+  const words = quote.split(" ");
 
-    typeText();
+  const container = {
+    hidden: { opacity: 0 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 * i },
+    }),
+  };
 
-    return () => clearTimeout(timeout);
-  }, []);
-
-  // Points for the connected sticks animation (simplified version)
-  const points = [
-    { x: 15, y: 20 },
-    { x: 25, y: 40 },
-    { x: 40, y: 30 },
-    { x: 60, y: 50 },
-    { x: 80, y: 40 },
-    { x: 85, y: 60 }
-  ];
+  const child = {
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { type: "spring", damping: 12, stiffness: 100 },
+    },
+    hidden: {
+      opacity: 0,
+      y: 20,
+      filter: "blur(10px)",
+      transition: { type: "spring", damping: 12, stiffness: 100 },
+    },
+  };
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:to-gray-800">
-      {/* Subtle background animation similar to About page */}
-      <motion.div 
-        className="absolute top-0 left-0 w-full h-full pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.2 }}
-        transition={{ duration: 1 }}
-      >
-        {points.map((point, index) => (
-          <motion.div
-            key={`point-${index}`}
-            className="absolute w-1.5 h-1.5 rounded-full bg-blue-400/50 dark:bg-purple-400/50"
-            style={{
-              left: `${point.x}%`,
-              top: `${point.y}%`
-            }}
-            animate={{
-              y: [0, -5, 0],
-              opacity: [0.2, 0.4, 0.2]
-            }}
-            transition={{
-              duration: 4 + Math.random() * 3,
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: index * 0.5
-            }}
-          />
-        ))}
+    <section id="home" className="relative min-h-screen flex items-center justify-center pt-20">
+      <div className="max-w-6xl mx-auto px-6 w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-16">
         
-        {/* Connecting lines */}
-        {points.slice(0, -1).map((point, index) => (
+        {/* Content */}
+        <div className="flex-1 text-center lg:text-left">
           <motion.div
-            key={`line-${index}`}
-            className="absolute h-px bg-blue-400/30 dark:bg-purple-400/30"
-            style={{
-              left: `${point.x}%`,
-              top: `${point.y}%`,
-              width: `${points[index+1].x - point.x}%`,
-              transformOrigin: 'left center'
-            }}
-            animate={{
-              opacity: [0.1, 0.2, 0.1]
-            }}
-            transition={{
-              duration: 5 + Math.random() * 3,
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: index * 0.3
-            }}
-          />
-        ))}
-      </motion.div>
-
-      <div className="container mx-auto px-6 py-12 md:py-20 flex flex-col md:flex-row items-center justify-center gap-12 z-10">
-        {/* Left Column - Profile Image */}
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="w-full md:w-1/3 flex justify-center"
-        >
-          <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-lg overflow-hidden shadow-2xl border-4 border-white dark:border-gray-800">
-            <img
-              src={profileImg}
-              alt="Mentesinot Getu Mulatu"
-              className="w-full h-full object-cover object-top"
-              style={{ objectPosition: 'top center' }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-          </div>
-        </motion.div>
-
-        {/* Right Column - Content */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="w-full md:w-2/3 text-center md:text-left"
-        >
-          <motion.h1 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold mb-4 text-gray-800 dark:text-white"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border text-xs font-medium text-muted mb-8"
           >
-            Hi, I'm{" "}
-            <span className="text-blue-500">
-              {displayText}
-              <motion.span
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{ 
-                  repeat: Infinity, 
-                  duration: 0.8,
-                  delay: typingComplete ? 0 : 0.2
-                }}
-                className="ml-0.5"
-              >
-                {typingComplete ? '' : '|'}
-              </motion.span>
+            <span className="w-2 h-2 rounded-full bg-green-500 relative">
+              <span className="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75"></span>
             </span>
-          </motion.h1>
-          
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-2xl md:text-3xl font-semibold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600"
+            Available for opportunities
+          </motion.div>
+
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="visible"
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tighter leading-[1.1] mb-6 heading-display flex flex-wrap justify-center lg:justify-start gap-x-4"
           >
-            Software Engineer
-          </motion.h2>
-          
+            {words.map((word, index) => (
+              <motion.span 
+                variants={child} 
+                key={index} 
+                className={index > 1 ? "text-muted" : "text-white"}
+              >
+                {word}
+              </motion.span>
+            ))}
+          </motion.div>
+
           <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-lg mb-8 max-w-2xl mx-auto md:mx-0 text-gray-600 dark:text-gray-300"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
+            className="text-lg text-muted max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed"
           >
-            I build exceptional digital experiences with modern technologies. Passionate about AI, mobile development, and creating solutions that make an impact.
+            I'm Mintesinot Getu. I specialize in full-stack web and mobile development, integrating AI tools to solve complex problems. Currently building different AI applications.
           </motion.p>
-          
+
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.8 }}
-            viewport={{ once: true }}
-            className="flex flex-wrap justify-center md:justify-start gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1, ease: "easeOut" }}
+            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
           >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveSection('projects')}
-              className="px-8 py-3 bg-black text-white rounded-lg font-medium shadow-lg hover:shadow-xl transition-all hover:bg-gray-900"
+            <button
+              onClick={() => scrollTo('projects')}
+              className="w-full sm:w-auto px-6 py-3 bg-primary text-background font-medium rounded-md hover:bg-white/90 transition-colors"
             >
-              View My Work
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveSection('contact')}
-              className="px-8 py-3 border-2 border-blue-500 text-blue-500 dark:text-white rounded-lg font-medium hover:bg-blue-500 hover:text-white transition-colors"
+              View Projects
+            </button>
+            <a
+              href={resume}
+              download
+              className="w-full sm:w-auto px-6 py-3 bg-transparent border border-border text-primary font-medium rounded-md hover:bg-surface transition-colors flex items-center justify-center gap-2"
             >
-              Contact Me
-            </motion.button>
+              Download CV
+            </a>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
-            viewport={{ once: true }}
-            className="mt-12 flex justify-center md:justify-start space-x-6"
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+            className="mt-12 flex items-center justify-center lg:justify-start gap-6 text-muted"
           >
-            <motion.a 
-              whileHover={{ y: -5 }}
-              href="https://github.com/mntc3434" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="group"
-            >
-              <FaGithub className="text-3xl text-gray-700 dark:text-gray-300 group-hover:text-blue-500 transition-colors" />
-            </motion.a>
-            <motion.a 
-              whileHover={{ y: -5 }}
-              href="https://t.me/mnteGt" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="group"
-            >
-              <FaTelegram className="text-3xl text-gray-700 dark:text-gray-300 group-hover:text-blue-500 transition-colors" />
-            </motion.a>
-            <motion.a 
-              whileHover={{ y: -5 }}
-              href= {resume}
-              download 
-              className="flex items-center group"
-            >
-              <FaFileDownload className="text-3xl text-gray-700 dark:text-gray-300 group-hover:text-blue-500 transition-colors" />
-            </motion.a>
+            <a href="https://github.com/mntc3434" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <FaGithub size={22} />
+            </a>
+            <a href="https://t.me/mnteGt" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+              <FaTelegram size={22} />
+            </a>
+            <a href="mailto:mnte3434@gmail.com" className="hover:text-primary transition-colors">
+              <FaEnvelope size={22} />
+            </a>
           </motion.div>
-        </motion.div>
+        </div>
 
+        {/* Profile Image - Minimalist Hover Effect */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 1.4, duration: 0.8 }}
-          viewport={{ once: true }}
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+          style={{ y: yParallax }}
+          className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 group"
         >
-          <motion.div
-            animate={{ 
-              y: [0, 15, 0],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              repeatType: "loop",
-            }}
-            className="w-6 h-6 border-4 border-blue-500 rounded-full"
-          ></motion.div>
+          {/* Subtle frame behind image that lights up on hover */}
+          <div className="absolute inset-0 bg-border transform translate-x-4 translate-y-4 rounded-xl -z-10 group-hover:bg-primary/20 transition-colors duration-500"></div>
+          <img
+            src={profileImg}
+            alt="Mintesinot Getu"
+            className="w-full h-full object-cover object-top rounded-xl border border-border blur-sm group-hover:blur-none group-hover:border-primary/50 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-500"
+          />
         </motion.div>
+        
       </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 text-muted animate-bounce hidden md:block"
+      >
+        <FaArrowDown size={16} />
+      </motion.div>
     </section>
   );
 };

@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Particles from 'react-tsparticles';
-import { loadSlim } from 'tsparticles-slim'; // Using slim package for lighter bundle
-import Header from './components/Header';
+import { motion, AnimatePresence, useScroll, useSpring, useTransform } from 'framer-motion';
 import Navbar from './components/Navbar';
+import Header from './components/Header';
 import About from './components/About';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
@@ -13,131 +11,89 @@ import Footer from './components/Footer';
 import './App.css';
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  const { scrollYProgress } = useScroll();
+  const scaleY = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+  
+  // Use useTransform so the dot's position perfectly syncs with the scroll progress, starting below the navbar (6rem / 96px)
+  const dotY = useTransform(scaleY, [0, 1], ["6rem", "100%"]);
 
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
+    document.documentElement.classList.add('dark');
+    setTimeout(() => setIsLoaded(true), 100);
+  }, []);
 
-  const particlesInit = async (engine) => {
-    await loadSlim(engine);
-  };
+  useEffect(() => {
+    const sections = ['home', 'about', 'skills', 'projects', 'experience', 'contact'];
 
-  const particlesOptions = {
-    fpsLimit: 60,
-    interactivity: {
-      events: {
-        onClick: {
-          enable: true,
-          mode: "push",
-        },
-        onHover: {
-          enable: true,
-          mode: "repulse",
-        },
-      },
-      modes: {
-        push: {
-          quantity: 4,
-        },
-        repulse: {
-          distance: 100,
-          duration: 0.4,
-        },
-      },
-    },
-    particles: {
-      color: {
-        value: darkMode ? "#ffffff" : "#3b82f6",
-      },
-      links: {
-        color: darkMode ? "#ffffff" : "#3b82f6",
-        distance: 150,
-        enable: true,
-        opacity: 0.3,
-        width: 1,
-      },
-      collisions: {
-        enable: true,
-      },
-      move: {
-        direction: "none",
-        enable: true,
-        outModes: {
-          default: "bounce",
-        },
-        random: false,
-        speed: 2,
-        straight: false,
-      },
-      number: {
-        density: {
-          enable: true,
-          area: 800,
-        },
-        value: 50,
-      },
-      opacity: {
-        value: 0.3,
-      },
-      shape: {
-        type: "circle",
-      },
-      size: {
-        value: { min: 1, max: 3 },
-      },
-    },
-    detectRetina: true,
-  };
+    const handleScroll = () => {
+      const scrollY = window.scrollY + 120;
+      for (const id of sections) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const bottom = top + el.offsetHeight;
+          if (scrollY >= top && scrollY < bottom) {
+            setActiveSection(id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-      <Particles
-        id="tsparticles"
-        init={particlesInit}
-        options={particlesOptions}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 0
+    <div className="min-h-screen bg-background text-primary relative selection:bg-white selection:text-black overflow-hidden">
+      
+      {/* The Long Journey Line (Behind text, starting below nav) */}
+      <div className="fixed left-1/2 top-24 bottom-0 w-px bg-border z-0 hidden lg:block -translate-x-1/2" />
+      <motion.div
+        className="fixed left-1/2 top-24 bottom-0 w-px bg-white z-0 origin-top hidden lg:block -translate-x-1/2 opacity-30"
+        style={{ scaleY }}
+      />
+      {/* The Traveler Dot */}
+      <motion.div 
+        className="fixed left-1/2 w-3 h-3 bg-white rounded-full z-0 shadow-[0_0_15px_rgba(255,255,255,0.4)] -translate-x-1/2 hidden lg:block"
+        style={{ 
+          top: dotY, 
+          translateY: "-50%" 
         }}
       />
-      
-      <Navbar 
-        darkMode={darkMode} 
-        setDarkMode={setDarkMode} 
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-      />
-      
-      <div className="relative z-10">
-        <AnimatePresence>
+
+      {/* Subtle minimalist grid */}
+      <div className="fixed inset-0 grid-bg pointer-events-none z-0" />
+
+      <AnimatePresence>
+        {isLoaded && (
           <motion.div
-            key={activeSection}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            {activeSection === 'home' && <Header setActiveSection={setActiveSection} />}
-            {activeSection === 'about' && <About />}
-            {activeSection === 'skills' && <Skills />}
-            {activeSection === 'projects' && <Projects />}
-            {activeSection === 'experience' && <Experience />}
-            {activeSection === 'contact' && <Contact />}
+            <Navbar activeSection={activeSection} setActiveSection={setActiveSection} />
+
+            <main className="relative z-10 selection:bg-white selection:text-black">
+              <Header setActiveSection={setActiveSection} />
+              <About />
+              <Skills />
+              <Projects />
+              <Experience />
+              <Contact />
+            </main>
+
+            <Footer />
           </motion.div>
-        </AnimatePresence>
-        
-        <Footer />
-      </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

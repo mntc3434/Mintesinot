@@ -1,121 +1,172 @@
 import { motion } from 'framer-motion';
 
 const About = () => {
-  const personalDetails = [
-    { label: "Full Name", value: "Mentesinot Getu Mulatu" },
-    { label: "Gender", value: "Male" },
-    { label: "Address", value: "Addis Ababa" },
-    { label: "Telephone", value: "+251-962-79-81-55" },
-    { label: "E-mail", value: "mnte3434@gmail.com" },
-    { label: "Nationality", value: "Ethiopian" },
+  const details = [
+    { label: 'Full Name', value: 'Mintesinot Getu Mulatu' },
+    { label: 'Nationality', value: 'Ethiopian' },
+    { label: 'Location', value: 'Addis Ababa' },
+    { label: 'Phone', value: '+251 962 79 81 55' },
+    { label: 'Email', value: 'mnte3434@gmail.com' },
   ];
 
   const languages = [
-    { name: "English", proficiency: "Proficient" },
-    { name: "Amharic", proficiency: "Native" },
+    { name: 'English', level: 'Proficient' },
+    { name: 'Amharic', level: 'Native' },
+    { name: 'Other', level: 'Local languages' },
   ];
 
-  const certifications = [
-    "Internship Certificate - Kuraz Tech",
-    "Engagement Certificate - Haramaya University Computing and Informatics Association",
-    "Recommendation Letters from instructors recognizing teamwork, and commitment",
-    "Program completion certificate from Udacity for a course Programming Fundamentals"
-  ];
-
-  const personalAttributes = [
+  const attributes = [
     "Fast learner with a passion for new technologies",
     "Strong problem-solving and critical thinking skills",
     "Enjoys teamwork, communication, and creative collaboration",
     "Hobbies include playing guitar, video games, and building simple projects"
   ];
 
+  const certs = [
+    "INSA Cyber Talent Summer Camp (4th Round Graduate)",
+    "Internship Certificate - Kuraz Tech",
+    "Engagement Certificate - HUCCIA",
+    "Machine Learning (Supervised & Unsupervised)",
+    "Neural Networks and Deep Learning",
+    "Natural Language Processing (NLP)",
+    "Data Analysis with Python",
+    "Web Application Technologies & Django",
+    "Programming Fundamentals"
+  ];
+
+  const paragraphVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+  };
+
   return (
-    <section id="about" className="py-20">
-      <div className="container mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+    <section id="about" className="py-32 border-t border-border relative">
+      <div className="max-w-6xl mx-auto px-6">
+        
+        <motion.div 
+          initial={{ opacity: 0, width: 0 }}
+          whileInView={{ opacity: 1, width: 48 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="mb-16"
         >
-          <h2 className="text-4xl font-bold mb-4">About Me</h2>
-          <div className="w-20 h-1 bg-blue-500 mx-auto"></div>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 heading-display">About Me</h2>
+          <div className="h-1 bg-primary"></div>
         </motion.div>
 
-        <div className="flex flex-col lg:flex-row gap-12">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="lg:w-2/3"
-          >
-            <div className="glass-card p-8 rounded-xl mb-8">
-              <h3 className="text-2xl font-semibold mb-6">
-                I'm a passionate Software Engineer based in Addis Ababa, Ethiopia
-              </h3>
-              <p className="mb-4">
-                With expertise in multiple programming languages and frameworks, I specialize in creating responsive, user-friendly applications using modern technologies like Flutter, .NET Core, and Laravel.
-              </p>
-              <p className="mb-4">
-                My journey in tech started when I was studying Computer Science at Haramaya University. Since then, I've worked on various projects including mobile apps, web applications, and AI integrations.
-              </p>
-              <p className="mb-6">
-                When I'm not coding, you can find me playing guitar, enjoying video games, or working on personal projects that challenge my skills.
-              </p>
-            </div>
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
+          
+          {/* Main Bio with Staggered Reveal */}
+          <div className="lg:col-span-7 space-y-8">
+            <motion.div 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={{
+                visible: { transition: { staggerChildren: 0.3 } }
+              }}
+              className="prose prose-invert prose-p:text-muted prose-p:leading-relaxed max-w-none"
+            >
+              <motion.p variants={paragraphVariants}>
+                I am a recent Computer Science graduate from Haramaya University with a strong foundation in full-stack web and mobile development, as well as an intense focus on Artificial Intelligence.
+              </motion.p>
+              <motion.p variants={paragraphVariants}>
+                My expertise spans across multiple ecosystems — from building seamless mobile applications using Flutter, to designing robust backend systems with .NET Core and Laravel, to integrating advanced AI workflows using Langchain and n8n.
+              </motion.p>
+              <motion.p variants={paragraphVariants}>
+                Beyond code, I am a fast learner and a dedicated problem solver. I believe in the power of creative collaboration to deliver solutions that are not just functional, but exceptional. When I am off the keyboard, you can find me playing guitar or experimenting with new hardware setups.
+              </motion.p>
+            </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="glass-card p-6 rounded-xl">
-                <h4 className="text-xl font-semibold mb-4">Languages</h4>
-                <ul className="space-y-2">
-                  {languages.map((lang, index) => (
-                    <li key={index} className="flex justify-between">
-                      <span>{lang.name}</span>
-                      <span className="text-blue-500">{lang.proficiency}</span>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, delay: 0.8 }}
+              className="grid sm:grid-cols-2 gap-8 pt-6 border-t border-border"
+            >
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-widest text-primary mb-4">Personal Details</h3>
+                <ul className="space-y-3 text-sm">
+                  {details.map((d) => (
+                    <li key={d.label} className="flex justify-between border-b border-border/50 pb-2">
+                      <span className="text-muted">{d.label}</span>
+                      <span className="text-primary font-medium">{d.value}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-
-              <div className="glass-card p-6 rounded-xl">
-                <h4 className="text-xl font-semibold mb-4">Certifications</h4>
-                <ul className="list-disc pl-5 space-y-2">
-                  {certifications.map((cert, index) => (
-                    <li key={index}>{cert}</li>
+              
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-widest text-primary mb-4">Languages</h3>
+                <ul className="space-y-3 text-sm">
+                  {languages.map((l) => (
+                    <li key={l.name} className="flex justify-between border-b border-border/50 pb-2">
+                      <span className="text-muted">{l.name}</span>
+                      <span className="text-primary font-medium">{l.level}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="lg:w-1/3"
-          >
-            <div className="glass-card p-6 rounded-xl sticky top-24">
-              <h4 className="text-xl font-semibold mb-4">Personal Details</h4>
-              <div className="space-y-4">
-                {personalDetails.map((detail, index) => (
-                  <div key={index}>
-                    <p className="font-medium text-blue-500">{detail.label}:</p>
-                    <p>{detail.value}</p>
-                  </div>
-                ))}
-              </div>
-
-              <h4 className="text-xl font-semibold mt-8 mb-4">Personal Attributes</h4>
-              <ul className="list-disc pl-5 space-y-2">
-                {personalAttributes.map((attr, index) => (
-                  <li key={index}>{attr}</li>
+          {/* Sidebars: Attributes & Certs */}
+          <div className="lg:col-span-5 space-y-12">
+            
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="minimal-card p-6"
+            >
+              <h3 className="text-sm font-semibold uppercase tracking-widest text-primary mb-5">Attributes & Interests</h3>
+              <ul className="space-y-4">
+                {attributes.map((attr, i) => (
+                  <motion.li 
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ delay: 0.4 + (i * 0.1) }}
+                    viewport={{ once: true }}
+                    key={i} 
+                    className="flex items-start gap-3 text-sm text-muted"
+                  >
+                    <span className="w-1.5 h-1.5 mt-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                    <span className="leading-relaxed">{attr}</span>
+                  </motion.li>
                 ))}
               </ul>
-            </div>
-          </motion.div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="minimal-card p-6"
+            >
+              <h3 className="text-sm font-semibold uppercase tracking-widest text-primary mb-5">Certifications</h3>
+              <ul className="space-y-3">
+                {certs.map((cert, i) => (
+                  <motion.li 
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ delay: 0.6 + (i * 0.05) }}
+                    viewport={{ once: true }}
+                    key={i} 
+                    className="flex items-center gap-3 text-sm text-muted"
+                  >
+                    <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="leading-snug">{cert}</span>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+
+          </div>
+
         </div>
       </div>
     </section>

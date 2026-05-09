@@ -1,147 +1,174 @@
- import { motion } from 'framer-motion';
-
-const experienceData = [
-  {
-    id: 1,
-    role: "Intern",
-    company: "Kuraz Tech",
-    period: "2024",
-    location: "Ethiopia",
-    description: [
-      "Contributed to the development of software, websites, and mobile apps",
-      "Worked on an entrepreneur-investor connection platform",
-      "Received certificate for completion"
-    ]
-  },
-  {
-    id: 2,
-    role: "AI Engineer Intern",
-    company: "iCog Labs",
-    period: "September 2025 – Present",
-    location: "Ethiopia",
-    description: [
-      "Working on the ECAN (Economic Attention Network) project at iCog Labs",
-      "Gaining hands-on experience in artificial intelligence research and development",
-      "Collaborating with senior engineers to enhance system design and performance"
-    ]
-  },
-  {
-    id: 3,
-    role: "AI Software Developer",
-    company: "Uponli",
-    period: "November 2025 – Present",
-    location: "Ethiopia",
-    description: [
-      "Designing an AI-based stock market prediction software system currently in the planning phase",
-      "Contributing to feature definition, system structure, and overall development preparation"
-    ]
-  }
-];
-
-
-const educationData = [
-  {
-    id: 1,
-    degree: "BSc Computer Science",
-    institution: "Haramaya University",
-    period: "May 2022 – June 2025",
-    description: [
-      
-    ]
-  }
-];
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const Experience = () => {
-  return (
-    <section id="experience" className="py-20 bg-gray-100 dark:bg-gray-800">
-      <div className="container mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl font-bold mb-4">Experience & Education</h2>
-          <div className="w-20 h-1 bg-blue-500 mx-auto"></div>
-        </motion.div>
+  const containerRef = useRef(null);
+  
+  // Removed local scroll progress since we use global journey line
 
-        <div className="grid md:grid-cols-2 gap-12">
-          {/* Experience */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-2xl font-semibold mb-8 text-center md:text-left">Work Experience</h3>
-            <div className="relative">
-              <div className="absolute left-8 top-0 h-full w-0.5 bg-blue-500"></div>
-              
-              {experienceData.map((exp, index) => (
+  const experiences = [
+    {
+      id: 1,
+      role: 'AI Software Developer',
+      company: 'Uponli',
+      period: 'November 2025 – Present',
+      location: 'Ethiopia (Remote)',
+      details: [
+        'Designing an AI-based stock market prediction software system using n8n.',
+        'Contributing to feature definition, system structure, and overall development preparation.',
+      ]
+    },
+    {
+      id: 2,
+      role: 'AI Engineer Intern',
+      company: 'iCog Labs',
+      period: 'September 2025 – Dec 2025',
+      location: 'Ethiopia',
+      details: [
+        'Working on the ECAN (Economic Attention Network) project at iCog Labs.',
+        'Collaborating with senior engineers to enhance system design and performance.',
+      ]
+    },
+    {
+      id: 3,
+      role: 'Software Engineering Intern',
+      company: 'Kuraz Tech',
+      period: '2024',
+      location: 'Ethiopia',
+      details: [
+        'Contributed to the development of software, websites, and mobile apps.',
+        'Worked on an entrepreneur-investor connection platform (hasab).',
+        'Successfully completed internship and received certificate of completion.',
+      ]
+    }
+  ];
+
+  const education = [
+    {
+      degree: 'BSc Computer Science',
+      institution: 'Haramaya University',
+      period: 'May 2022 – June 2025',
+      details: ''
+    }
+  ];
+
+  return (
+    <section id="experience" className="py-32 border-t border-border bg-surface/30">
+      <div className="max-w-6xl mx-auto px-6" ref={containerRef}>
+        
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 relative">
+          
+          {/* Work Experience */}
+          <div className="relative z-10">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="mb-12"
+            >
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 heading-display">Experience</h2>
+              <div className="w-8 h-1 bg-primary"></div>
+            </motion.div>
+
+            {/* Removed local before: classes to rely on global journey line */}
+            <div className="space-y-12 relative">
+              {experiences.map((exp, index) => (
                 <motion.div
                   key={exp.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="relative mb-8 pl-16 timeline-item"
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  className="relative pl-8 md:pl-0"
                 >
-                  <div className="glass-card p-6 rounded-lg shadow-md">
-                    <h4 className="text-xl font-semibold mb-1">{exp.role} - {exp.company}</h4>
-                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-3">
-                      <span>{exp.period}</span>
-                      <span className="mx-2">•</span>
-                      <span>{exp.location}</span>
+                  <div className="md:flex items-center justify-between md:mb-2">
+                    <div className="flex items-center gap-4 mb-2 md:mb-0">
+                      {/* Timeline dot */}
+                      <motion.div 
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        transition={{ delay: 0.3 }}
+                        viewport={{ once: true }}
+                        className="absolute left-0 md:relative md:left-auto w-4 h-4 rounded-full border-4 border-background bg-primary z-20"
+                      />
+                      <h3 className="text-lg font-bold text-white">{exp.role}</h3>
                     </div>
-                    <ul className="list-disc pl-5 space-y-2">
-                      {exp.description.map((item, i) => (
-                        <li key={i}>{item}</li>
+                    <span className="text-xs font-semibold uppercase tracking-widest text-muted">{exp.period}</span>
+                  </div>
+                  
+                  <div className="md:pl-8">
+                    <p className="text-primary font-medium text-sm mb-4">{exp.company} <span className="text-muted font-normal">— {exp.location}</span></p>
+                    <ul className="space-y-2">
+                      {exp.details.map((detail, i) => (
+                        <motion.li 
+                          initial={{ opacity: 0 }}
+                          whileInView={{ opacity: 1 }}
+                          transition={{ delay: 0.4 + (i * 0.1) }}
+                          viewport={{ once: true }}
+                          key={i} 
+                          className="text-sm text-muted leading-relaxed flex items-start gap-2"
+                        >
+                          <span className="mt-2 w-1 h-1 rounded-full bg-border flex-shrink-0"></span>
+                          {detail}
+                        </motion.li>
                       ))}
                     </ul>
                   </div>
                 </motion.div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Education */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-2xl font-semibold mb-8 text-center md:text-left">Education</h3>
-            <div className="relative">
-              <div className="absolute left-8 top-0 h-full w-0.5 bg-blue-500"></div>
-              
-              {educationData.map((edu, index) => (
+          <div className="relative z-10">
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="mb-12 lg:pl-16"
+            >
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4 heading-display">Education</h2>
+              <div className="w-8 h-1 bg-primary"></div>
+            </motion.div>
+
+            {/* Removed local before: classes to rely on global journey line */}
+            <div className="space-y-12 relative lg:pl-16">
+              {education.map((edu, index) => (
                 <motion.div
-                  key={edu.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="relative mb-8 pl-16 timeline-item"
+                  key={index}
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  className="relative pl-8 md:pl-0"
                 >
-                  <div className="glass-card p-6 rounded-lg shadow-md">
-                    <h4 className="text-xl font-semibold mb-1">{edu.degree}</h4>
-                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-3">
-                      <span>{edu.institution}</span>
-                      <span className="mx-2">•</span>
-                      <span>{edu.period}</span>
+                  <div className="md:flex items-center justify-between md:mb-2">
+                    <div className="flex items-center gap-4 mb-2 md:mb-0">
+                      <motion.div 
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        transition={{ delay: 0.3 }}
+                        viewport={{ once: true }}
+                        className="absolute left-0 md:relative md:left-auto w-4 h-4 rounded-full border-4 border-background bg-primary z-20"
+                      />
+                      <h3 className="text-lg font-bold text-white">{edu.degree}</h3>
                     </div>
-                    <ul className="list-disc pl-5 space-y-2">
-                      {edu.description.map((item, i) => (
-                        <li key={i}>{item}</li>
-                      ))}
-                    </ul>
+                    <span className="text-xs font-semibold uppercase tracking-widest text-muted">{edu.period}</span>
+                  </div>
+                  
+                  <div className="md:pl-8">
+                    <p className="text-primary font-medium text-sm mb-3">{edu.institution}</p>
+                    {edu.details && (
+                      <p className="text-sm text-muted inline-flex items-center px-2.5 py-1 rounded border border-border bg-background">
+                        {edu.details}
+                      </p>
+                    )}
                   </div>
                 </motion.div>
               ))}
             </div>
-          </motion.div>
+          </div>
+
         </div>
       </div>
     </section>

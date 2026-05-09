@@ -1,127 +1,115 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBars, FaTimes } from 'react-icons/fa';
-
-const navItems = [
-  { id: 'home', label: 'Home' },
-  { id: 'about', label: 'About' },
-  { id: 'skills', label: 'Skills' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'contact', label: 'Contact' },
-];
 
 const Navbar = ({ activeSection, setActiveSection }) => {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const navItems = [
+    { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About' },
+    { id: 'skills', label: 'Skills' },
+    { id: 'projects', label: 'Work' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'contact', label: 'Contact' }
+  ];
 
   const scrollTo = (id) => {
     const el = document.getElementById(id);
     if (el) {
-      window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+      window.scrollTo({
+        top: el.offsetTop - 80,
+        behavior: 'smooth'
+      });
+      setActiveSection(id);
     }
-    setActiveSection(id);
-    setMenuOpen(false);
+    setMobileMenuOpen(false);
   };
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? 'bg-[rgba(8,12,20,0.85)] backdrop-blur-xl border-b border-white/5 py-3'
-            : 'bg-transparent py-5'
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled ? 'bg-background/80 backdrop-blur-md border-b border-border py-4' : 'bg-transparent py-6'
         }`}
       >
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          {/* Logo */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+        <nav className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-xl font-bold tracking-tight cursor-pointer heading-display"
             onClick={() => scrollTo('home')}
-            className="text-xl font-bold tracking-tight"
           >
-            <span className="gradient-text" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>MG.</span>
-          </motion.button>
+            Mintesinot<span className="text-muted">.</span>
+          </motion.div>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
-              <button
+          <div className="hidden md:flex items-center gap-8">
+            {navItems.map((item, i) => (
+              <motion.button
                 key={item.id}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
                 onClick={() => scrollTo(item.id)}
-                className={`nav-link px-4 py-2 rounded-lg transition-colors ${
-                  activeSection === item.id ? 'active text-white' : 'text-gray-400 hover:text-white'
+                className={`text-sm font-medium transition-colors ${
+                  activeSection === item.id ? 'text-primary' : 'text-muted hover:text-primary'
                 }`}
               >
                 {item.label}
-              </button>
+              </motion.button>
             ))}
-            <motion.a
-              href="#contact"
-              onClick={(e) => { e.preventDefault(); scrollTo('contact'); }}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className="ml-4 px-5 py-2 rounded-lg text-sm font-semibold text-white glow-btn"
-              style={{ background: 'linear-gradient(135deg, #4f8ef7, #7c5af6)' }}
-            >
-              Hire Me
-            </motion.a>
           </div>
 
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-gray-300 hover:text-white p-2 rounded-lg bg-white/5"
+          <button 
+            className="md:hidden text-primary focus:outline-none"
+            onClick={() => setMobileMenuOpen(true)}
           >
-            {menuOpen ? <FaTimes size={18} /> : <FaBars size={18} />}
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="square" strokeLinejoin="miter" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </button>
-        </div>
-      </motion.nav>
+        </nav>
+      </header>
 
-      {/* Mobile menu */}
+      {/* Mobile Menu */}
       <AnimatePresence>
-        {menuOpen && (
+        {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed top-[64px] left-0 right-0 z-40 bg-[rgba(8,12,20,0.97)] backdrop-blur-xl border-b border-white/5 md:hidden"
+            className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center"
           >
-            <div className="flex flex-col p-4 gap-1">
-              {navItems.map((item, i) => (
-                <motion.button
+            <button 
+              className="absolute top-6 right-6 text-muted hover:text-primary"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="square" strokeLinejoin="miter" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <div className="flex flex-col items-center gap-8">
+              {navItems.map((item) => (
+                <button
                   key={item.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
                   onClick={() => scrollTo(item.id)}
-                  className={`text-left px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                    activeSection === item.id
-                      ? 'bg-blue-500/10 text-blue-400'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  className={`text-2xl font-medium tracking-tight ${
+                    activeSection === item.id ? 'text-primary' : 'text-muted'
                   }`}
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
                 >
                   {item.label}
-                </motion.button>
+                </button>
               ))}
-              <button
-                onClick={() => scrollTo('contact')}
-                className="mt-2 px-4 py-3 rounded-xl text-sm font-semibold text-white text-left"
-                style={{ background: 'linear-gradient(135deg, #4f8ef7, #7c5af6)' }}
-              >
-                Hire Me
-              </button>
             </div>
           </motion.div>
         )}
