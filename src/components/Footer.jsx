@@ -1,5 +1,4 @@
-import { motion } from 'framer-motion';
-import { FaGithub, FaTelegram, FaLinkedin, FaEnvelope } from 'react-icons/fa';
+import { FaGithub, FaTelegram, FaEnvelope } from 'react-icons/fa';
 
 const Footer = () => {
   const year = new Date().getFullYear();

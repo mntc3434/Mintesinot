@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { FaGithub, FaTelegram, FaArrowDown, FaEnvelope } from 'react-icons/fa';
 import profileImg from '../assets/profile3.jpg';
